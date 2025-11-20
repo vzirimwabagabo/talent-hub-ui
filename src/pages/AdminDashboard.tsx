@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
-import { Badge } from '@/components/ui/Badge';
+import { Badge } from '@/components/ui/badge';
 import { 
   Users, 
   DollarSign, 
@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { getAdminAnalytics, getAdminUsers } from '@/api/adminApi';
 import { AdminAnalytics, AdminUser } from '@/types/admin';
+// comments
 
 const StatCard = ({
   title,
