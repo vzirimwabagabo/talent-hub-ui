@@ -23,7 +23,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { getAllOpportunities } from '@/api/opportunityApi';
-import type { Opportunity } from '@/types/opportunity'; // We’ll define this below
+import type { Opportunity } from '@/types/opportunity';
 import Header from '@/components/Header';
 
 // Category icons & colors

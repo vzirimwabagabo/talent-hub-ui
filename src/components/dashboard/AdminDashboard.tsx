@@ -64,7 +64,7 @@ export const AdminDashboard = () => {
       <div className="max-w-[77vw] w-full">
         {/* Main Dashboard Title */}
         <h1 className="text-3xl font-bold tracking-tight mb-2 mt-6 ml-2 select-none">
-          Dashboard
+          Admin Dashboard
         </h1>
 
         {/* Admin Badge / Subtitle */}
@@ -77,7 +77,7 @@ export const AdminDashboard = () => {
 
         {/* Analytics Section */}
         <section>
-          <h2 className="text-2xl font-semibold mb-2 ml-1">Analytics</h2>
+         <h2 className="text-2xl font-semibold mb-2 ml-1">Analytics</h2>
           <div className="flex space-x-3 overflow-x-auto scrollbar-thin scrollbar-thumb-primary scrollbar-track-muted rounded-md py-2">
             {[
               {

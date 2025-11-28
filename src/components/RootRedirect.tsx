@@ -7,12 +7,15 @@ import Index from '@/pages/Index';
 
 
 const RootRedirect = () => {
-  const { isAuthenticated, loading } = useAuth();
+  const { isAuthenticated, loading, user } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
     if (!loading && isAuthenticated) {
-      navigate('/dashboard', { replace: true });
+      if(user?.role == 'participant' || user?.role == "supporter") {
+        navigate("/my-analytics", {replace:true});
+      }else{ navigate('/dashboard', { replace: true });}
+
     }
   }, [isAuthenticated, loading, navigate]);
 

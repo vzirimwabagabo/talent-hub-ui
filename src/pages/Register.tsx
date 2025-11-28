@@ -23,6 +23,7 @@ import {
 } from '@/components/ui/Card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/Input';
+import Header from '@/components/Header';
 
 // 🔒 Password validation helper
 const validatePassword = (password: string) => {
