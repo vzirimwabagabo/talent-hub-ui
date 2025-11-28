@@ -33,10 +33,8 @@ interface AuthContextType {
   hasRole: (role: UserRole) => boolean;
   hasSupporterType: (type: SupporterType) => boolean;
 }
-
 // Create context
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
-
 // Custom hook
 export const useAuth = (): AuthContextType => {
   const context = useContext(AuthContext);
@@ -45,15 +43,12 @@ export const useAuth = (): AuthContextType => {
   }
   return context;
 };
-
 interface AuthProviderProps {
   children: ReactNode;
 }
-
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
-
   useEffect(() => {
     const initializeAuth = async () => {
       const token = localStorage.getItem('authToken');
