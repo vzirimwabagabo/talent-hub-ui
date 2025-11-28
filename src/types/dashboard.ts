@@ -80,6 +80,12 @@ export interface Event {
   isVirtual: boolean;
   attendeesCount: number;
 }
+export interface Donation {
+  id: string;
+  amount: number;
+  description?: string;
+  createdAt: string; // ISO date string
+}
 
 // --- Admin ---
 export interface UserStats {

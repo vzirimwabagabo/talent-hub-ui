@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { DollarSign, Users, Calendar, FileText } from 'lucide-react';
+import { DollarSign, Users, Calendar, FileText, BarChart3 } from 'lucide-react';
 import type { SupporterType } from '@/types/auth';
 import type { MatchRequest, Donation, Event, Opportunity } from '@/types/dashboard';
 import api from '@/api/apiConfig';
@@ -62,6 +62,26 @@ export const SupporterDashboard = ({ supporterType }: SupporterDashboardProps) =
           </p>
         </div>
       </div>
+      {/* Analytics Button - Quick Action */}
+<Card>
+  <CardContent className="p-4">
+    <div className="flex flex-wrap items-center justify-between gap-4">
+      <div>
+        <h3 className="font-medium">Track your impact</h3>
+        <p className="text-sm text-muted-foreground mt-1">
+          View analytics on applications, matches, donations, and events.
+        </p>
+      </div>
+      <Button
+        variant="outline"
+        onClick={() => navigate('/my-analytics')}
+      >
+        <BarChart3 className="h-4 w-4 mr-2" />
+        Go to Analytics
+      </Button>
+    </div>
+  </CardContent>
+</Card>
 
       {/* Posted Opportunities */}
       <Card>

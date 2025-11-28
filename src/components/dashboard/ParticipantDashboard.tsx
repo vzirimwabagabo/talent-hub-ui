@@ -1,12 +1,11 @@
-// src/components/dashboard/ParticipantDashboard.tsx
-
+// src/components/dashboard/ParticipantDashboard.ts
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { Clock, CheckCircle, AlertCircle, ExternalLink, Bookmark } from 'lucide-react';
+import { Clock, CheckCircle, AlertCircle, ExternalLink, Bookmark, BarChart3 } from 'lucide-react';
 import api from '@/api/apiConfig';
 import type { MatchRequest, TalentProfile, Opportunity, BookmarkItem } from '@/types/dashboard';
 
@@ -66,9 +65,20 @@ export const ParticipantDashboard = () => {
                 </div>
                 <Progress value={profile.profileCompletion} className="h-2" />
               </div>
-              <Button size="sm" onClick={() => navigate('/profile')}>
-                Complete Profile
-              </Button>
+              {/* 👇 Updated button group */}
+              <div className="flex gap-2">
+                <Button size="sm" onClick={() => navigate('/profile')}>
+                  Complete Profile
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => navigate('/my-analytics')}
+                >
+                  <BarChart3 className="h-3 w-3 mr-1" />
+                  Recommended
+                </Button>
+              </div>
             </div>
           </CardContent>
         </Card>
@@ -112,7 +122,7 @@ export const ParticipantDashboard = () => {
       </Card>
 
       {/* Recommended Opportunities */}
-      <Card>
+       <Card>
         <CardHeader>
           <CardTitle>Recommended Opportunities</CardTitle>
         </CardHeader>

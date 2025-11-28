@@ -21,7 +21,7 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { login } = useAuth();
+  const { login,user } = useAuth();
   const navigate = useNavigate();
 // no comments
   const handleSubmit = async (e: React.FormEvent) => {
@@ -33,11 +33,19 @@ const Login = () => {
     setIsSubmitting(false);
 
     if (result.success) {
-      navigate('/dashboard');
-    } else {
+      if(user?.role ==="participant" || user?.role ==="supporter") 
+        {
+         navigate('/my-analytics');
+      }
+     else{
+        navigate('/dashboard');
+      } 
+    }
+    else{
       setError(result.error || 'Invalid email or password.');
     }
-  };
+  }
+  ;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-muted flex items-center justify-center p-4 relative overflow-hidden">
@@ -139,6 +147,7 @@ const Login = () => {
               </Button>
               <Button variant="outline" size="icon" className="hover:bg-muted/50">
                 <Linkedin className="h-5 w-5" />
+                
               </Button>
               <Button variant="outline" size="icon" className="hover:bg-muted/50">
                 <Twitter className="h-5 w-5" />

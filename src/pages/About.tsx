@@ -1,10 +1,12 @@
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/Card";
+import Header from "@/components/Header";
 
 //import { Header } from "@radix-ui/react-accordion"; 
 
 const About = () => {
   return (
     <div className="min-h-screen bg-background p-8">
+      <Header/>
       <Card>
         <CardHeader>
           <CardTitle className="text-3xl font-bold">About Us</CardTitle>

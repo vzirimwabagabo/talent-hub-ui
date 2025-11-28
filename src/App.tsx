@@ -18,7 +18,7 @@ import Volunteer from "./pages/Volunteer";
 import { LanguageProvider } from "./contexts/LanguageContext";
 import Language from "./pages/Language";
 import About from "./pages/About";
-import Analytics from "./pages/Analytics";
+import Analytics from "./pages/ParticipantAnalytics";
 import Bookmarks from "./pages/Bookmarks";
 import Donations from "./pages/Donations";
 import Events from "./pages/Events";
@@ -30,12 +30,11 @@ import Reviews from "./pages/Reviews";
 import DashboardLayout from "./components/DashboardLayout";
 import AdminDashboard from "./pages/AdminDashboard";
 import MatchRequests from "@/pages/MatchRequest";
-import AdminDashboard1 from "./pages/TestingPage";
 import CreateOpportunity from "./pages/admin/CreateOpportunity";
 import OpportunityDetail from "./pages/opportunityDetails";
 import EditOpportunity from "./pages/EditOpportunity";
 import CreateEvent from "./pages/CreateEvent";
-
+import MyAnalytics from '@/pages/MyAnalytics'
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -60,20 +59,21 @@ const App = () => (
               <Route
                 path="/login"
                 element={
-                  <PublicRoute redirectPath="/dashboard">
+                  <PublicRoute 
+                  redirectPath="dashboard">
                     <Login />
                   </PublicRoute>
                 }
               />
 
-              <Route
+              {/* <Route
                 path="/testing"
                 element={
                   <PublicRoute redirectPath="/dashboard">
                     <AdminDashboard1 />
                   </PublicRoute>
                 }
-              />
+              /> */}
 
 
               <Route
@@ -125,6 +125,16 @@ const App = () => (
                   </ProtectedRoute>
                 }
               />
+              <Route
+                path="/my-analytics"
+                element={
+                  <ProtectedRoute>
+                    <DashboardLayout>
+                      <MyAnalytics />
+                    </DashboardLayout>
+                  </ProtectedRoute>
+                }
+              />
 
                <Route
                 path="/opportunities/:id"
@@ -135,7 +145,6 @@ const App = () => (
                   </ProtectedRoute>
                 }
               />
-
               <Route
                 path="/events/create"
                 element={
@@ -176,15 +185,15 @@ const App = () => (
                 }
               />
               <Route
-  path="/admin/review"
-  element={
-    <ProtectedRoute requiredRole="admin">
-      <DashboardLayout>
-        <Reviews />
-      </DashboardLayout>
-    </ProtectedRoute>
-  }
-/>
+                path="/admin/review"
+                element={
+                  <ProtectedRoute requiredRole="admin">
+                    <DashboardLayout>
+                      <Reviews />
+                    </DashboardLayout>
+                  </ProtectedRoute>
+                }
+              />
 
               <Route
                 path="/events"
@@ -246,6 +255,7 @@ const App = () => (
     </ProtectedRoute>
   }
 />
+
 <Route
   path="/volunteer"
   element={

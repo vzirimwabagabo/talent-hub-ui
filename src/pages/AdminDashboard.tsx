@@ -13,9 +13,14 @@ import {
 } from 'lucide-react';
 import { getAdminAnalytics, getAdminUsers } from '@/api/adminApi';
 import { AdminAnalytics, AdminUser } from '@/types/admin';
+import Header from '@/components/Header'; 
+
 // comments
 
+
+<header/>
 const StatCard = ({
+
   title,
   value,
   icon: Icon,
@@ -40,6 +45,7 @@ const StatCard = ({
 );
 
 const UserTable = ({ users }: { users: AdminUser[] }) => (
+
   <Card>
     <CardHeader>
       <CardTitle>Recent Users</CardTitle>
@@ -140,6 +146,7 @@ const AdminDashboard = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
+        {/* <Header/> */}
         <div className="text-muted-foreground">Loading admin dashboard...</div>
       </div>
     );

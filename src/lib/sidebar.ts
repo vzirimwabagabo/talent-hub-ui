@@ -29,44 +29,45 @@ interface SidebarItem {
 }
 
 export const sidebarItems: SidebarItem[] = [
-  // === COMMON TO ALL ===
-  {
-    title: 'Dashboard',
-    href: '/dashboard',
-    icon: LayoutDashboard,
-  },
+  // === COMMON TO BOTH ===
+   {
+  title: 'My Analytics',
+  href: '/my-analytics',
+  icon: BarChart3,
+  roles: ['participant', 'supporter'],
+},
 
   // === PARTICIPANT ONLY ===
-  {
-    title: 'Profile',
-    href: '/profile',
-    icon: User,
-    roles: ['participant'],
-  },
+  // {
+  //   title: 'Profile',
+  //   href: '/profile',
+  //   icon: User,
+  //   roles: ['participant'],
+  // },
   {
     title: 'Opportunities',
     href: '/opportunities',
     icon: Briefcase,
     roles: ['participant'],
   },
-  {
-    title: 'Applications',
-    href: '/applications',
-    icon: FileText,
-    roles: ['participant'],
-  },
-  {
-    title: 'Portfolio',
-    href: '/portfolio',
-    icon: Star,
-    roles: ['participant'],
-  },
-  {
-    title: 'Bookmarks',
-    href: '/bookmarks',
-    icon: Bookmark,
-    roles: ['participant'],
-  },
+  // {
+  //   title: 'Applications',
+  //   href: '/applications',
+  //   icon: FileText,
+  //   roles: ['participant'],
+  // },
+  // {
+  //   title: 'Portfolio',
+  //   href: '/portfolio',
+  //   icon: Star,
+  //   roles: ['participant'],
+  // },
+  // {
+  //   title: 'Bookmarks',
+  //   href: '/bookmarks',
+  //   icon: Bookmark,
+  //   roles: ['participant'],
+  // },
   {
     title: 'Events',
     href: '/events',
@@ -81,12 +82,12 @@ export const sidebarItems: SidebarItem[] = [
   },
 
   // === SUPPORTER ONLY ===
+  
   {
-    title: 'My Opportunities',
-    href: '/my-opportunities',
+    title: 'Opportunities',
+    href: '/opportunities',
     icon: Briefcase,
     roles: ['supporter'],
-    supporterTypes: ['employer'],
   },
   {
     title: 'Donations',
@@ -95,39 +96,40 @@ export const sidebarItems: SidebarItem[] = [
     roles: ['supporter'],
     supporterTypes: ['donor'],
   },
-  {
-    title: 'Volunteer',
-    href: '/volunteer',
-    icon: HandHelping,
-    roles: ['supporter'],
-    supporterTypes: ['volunteer'],
-  },
-  {
-    title: 'Talent Requests',
-    href: '/match-requests',
-    icon: Users,
-    roles: ['supporter'],
-  },
+  // {
+  //   title: 'Volunteer',
+  //   href: '/volunteer',
+  //   icon: HandHelping,
+  //   roles: ['supporter'],
+  //   supporterTypes: ['volunteer'],
+  // },
+  // {
+  //   title: 'Talent Requests',
+  //   href: '/match-requests',
+  //   icon: Users,
+  //   roles: ['supporter'],
+  // },
 
   // === ADMIN ONLY ===
+   {
+    title: 'Analytics',
+    href: '/dashboard',
+    icon: LayoutDashboard,
+    roles: ["admin"],
+  },
+
   {
     title: 'User Management',
     href: '/admin/users',
     icon: Users,
     roles: ['admin'],
   },
-  {
-    title: 'Content Review',
-    href: '/admin/review',
-    icon: Shield,
-    roles: ['admin'],
-  },
-  {
-    title: 'Analytics',
-    href: '/analytics',
-    icon: BarChart3,
-    roles: ['admin'],
-  },
+  // {
+  //   title: 'Content Review',
+  //   href: '/admin/review',
+  //   icon: Shield,
+  //   roles: ['admin'],
+  // },
   {
     title: 'All Opportunities',
     href: '/admin/create-opportunity',
@@ -153,4 +155,5 @@ export const sidebarItems: SidebarItem[] = [
     href: '/settings',
     icon: Settings,
   },
+  
 ];

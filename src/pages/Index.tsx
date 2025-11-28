@@ -7,15 +7,9 @@ import heroImage from "@/assets/hero-image.jpg";
 import Header from "@/components/Header";
 
 const Index = () => {
-
-
-
   return (
     <div className="min-h-screen bg-background">
-
       <Header />
-
-
       {/* Hero Section */}
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-hero opacity-10" />
@@ -56,7 +50,6 @@ const Index = () => {
           </div>
         </div>
       </section>
-
       {/* Features Section */}
       <section className="py-20 bg-secondary/30">
         <div className="container mx-auto px-4">
