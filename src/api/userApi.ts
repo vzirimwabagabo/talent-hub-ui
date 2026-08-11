@@ -40,6 +40,19 @@ export const loginUser = async (
   }
 };
 
+// Admin login
+export const loginAdminUser = async (
+  credentials: { email: string; password: string }
+): Promise<ApiResponse<{ token: string; user: AuthUser }>> => {
+  try {
+    const response = await api.post<{ token: string; user: AuthUser }>('/auth/admin/login', credentials);
+    return { success: true, data: response.data };
+  } catch (error: any) {
+    const message = error.response?.data?.message || 'Failed to log in as admin';
+    return { success: false, error: message };
+  }
+};
+
 // Register
 export const registerUser = async (
   data: RegisterCredentials
@@ -69,8 +82,14 @@ export const updateUserProfile = async (
   updates: Partial<Omit<AuthUser, 'id' | 'createdAt' | 'updatedAt'>>
 ): Promise<ApiResponse<AuthUser>> => {
   try {
-    const response = await api.patch<{ user: AuthUser }>('/auth/profile', updates);
-    return { success: true, data: response.data.user };
+    const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
+    const userId = currentUser?.id || currentUser?._id;
+    if (!userId) {
+      return { success: false, error: 'No authenticated user found' };
+    }
+
+    const response = await api.patch<{ data: AuthUser }>(`/user/${userId}`, updates);
+    return { success: true, data: response.data.data };
   } catch (error: any) {
     const message = error.response?.data?.message || 'Failed to update profile';
     return { success: false, error: message };
@@ -109,7 +128,7 @@ export const resetPassword = async (
   newPassword: string
 ): Promise<ApiResponse<void>> => {
   try {
-    await api.post('/auth/reset-password', { token, newPassword });
+    await api.post(`/auth/reset-password/${token}`, { password: newPassword });
     return { success: true };
   } catch (error: any) {
     const message = error.response?.data?.message || 'Failed to reset password';
@@ -120,7 +139,7 @@ export const resetPassword = async (
 // Logout (optional backend invalidation)
 export const logoutUser = async (): Promise<ApiResponse<void>> => {
   try {
-    await api.post('/auth/logout');
+    await Promise.resolve();
     return { success: true };
   } catch (error: any) {
     // We still consider logout successful even if backend fails

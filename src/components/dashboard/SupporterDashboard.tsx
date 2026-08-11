@@ -23,23 +23,29 @@ export const SupporterDashboard = ({ supporterType }: SupporterDashboardProps) =
 
   useEffect(() => {
     const fetchData = async () => {
-      try {
-        const [oppRes, reqRes, donRes, eventRes] = await Promise.all([
-          api.get<{ opportunities: Opportunity[] }>('/opportunity'),
-          api.get<{ requests: MatchRequest[] }>('/match/my'),
-          supporterType === 'donor' 
-            ? api.get<{ donations: Donation[] }>('/donation') 
-            : Promise.resolve({ data: { donations: [] } }),
-          api.get<{ events: Event[] }>('/event'),
-        ]);
+      const [oppRes, reqRes, donRes, eventRes] = await Promise.allSettled([
+        api.get<{ opportunities?: Opportunity[]; data?: Opportunity[] }>('/opportunity'),
+        api.get<{ data?: MatchRequest[] }>('/match/my'),
+        supporterType === 'donor'
+          ? api.get<{ donations?: Donation[]; data?: Donation[] }>('/donation')
+          : Promise.resolve({ data: { donations: [] as Donation[] } }),
+        api.get<{ events?: Event[]; data?: Event[] }>('/event'),
+      ]);
 
+      if (oppRes.status === 'fulfilled') {
+        setOpportunities(oppRes.value.data.opportunities || oppRes.value.data.data || []);
+      }
 
-        setOpportunities(oppRes.data.data || []);
-        setMatchRequests(reqRes.data.requests);
-        setDonations(donRes.data.donations);
-        setEvents(eventRes.data.events);
-      } catch (error) {
-        console.error('Failed to load dashboard data:', error);
+      if (reqRes.status === 'fulfilled') {
+        setMatchRequests(reqRes.value.data.data || []);
+      }
+
+      if (donRes.status === 'fulfilled') {
+        setDonations((donRes.value as any).data.donations || (donRes.value as any).data.data || []);
+      }
+
+      if (eventRes.status === 'fulfilled') {
+        setEvents(eventRes.value.data.events || eventRes.value.data.data || []);
       }
     };
     fetchData();

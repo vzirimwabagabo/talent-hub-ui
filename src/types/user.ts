@@ -12,7 +12,6 @@ export interface User {
   avatar?: string;
   createdAt: string;
   updatedAt: string;
-  normalizeUser(user: any): User;
 }
 
 

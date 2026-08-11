@@ -18,19 +18,30 @@ export const ParticipantDashboard = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      try {
-        const [profileRes, appsRes, recRes, bookmarksRes] = await Promise.all([
-          api.get<{ profile: TalentProfile }>('/talent/profile'),
-          api.get<{ requests: MatchRequest[] }>('/match-requests'),
-          api.get<{ opportunities: Opportunity[] }>('/opportunities/recommended'),
-          api.get<{ bookmarks: BookmarkItem[] }>('/bookmarks'),
-        ]);
-        setProfile(profileRes.data.profile);
-        setApplications(appsRes.data.requests);
-        setRecommended(recRes.data.opportunities);
-        setBookmarks(bookmarksRes.data.bookmarks);
-      } catch (error) {
-        console.error('Failed to load dashboard data:', error);
+      const [profileRes, appsRes, recRes, bookmarksRes] = await Promise.allSettled([
+        api.get<{ data: TalentProfile }>('/talent/me'),
+        api.get<{ data: MatchRequest[] }>('/match/my'),
+        api.get<{ opportunities: Opportunity[] }>('/opportunity'),
+        api.get<{ data: BookmarkItem[] }>('/bookmark'),
+      ]);
+
+      if (profileRes.status === 'fulfilled') {
+        setProfile(profileRes.value.data.data || null);
+      } else {
+        // Missing talent profile should not block the rest of dashboard widgets.
+        setProfile(null);
+      }
+
+      if (appsRes.status === 'fulfilled') {
+        setApplications(appsRes.value.data.data || []);
+      }
+
+      if (recRes.status === 'fulfilled') {
+        setRecommended((recRes.value.data.opportunities || []).slice(0, 6));
+      }
+
+      if (bookmarksRes.status === 'fulfilled') {
+        setBookmarks(bookmarksRes.value.data.data || []);
       }
     };
     fetchData();
@@ -53,7 +64,7 @@ export const ParticipantDashboard = () => {
           <CardHeader>
             <CardTitle className="flex items-center justify-between">
               <span>Your Profile</span>
-              <Badge variant="participant">Participant</Badge>
+              <Badge variant="participant">Talent</Badge>
             </CardTitle>
           </CardHeader>
           <CardContent>

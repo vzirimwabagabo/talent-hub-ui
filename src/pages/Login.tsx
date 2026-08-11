@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import { Mail, Lock, Eye, EyeOff, Github, Linkedin, Twitter } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, Github, Linkedin, Twitter, ArrowLeft, Home } from 'lucide-react';
 import {
   Card,
   CardContent,
@@ -21,9 +21,9 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { login,user } = useAuth();
+  const { login } = useAuth();
   const navigate = useNavigate();
-// no comments
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
@@ -33,22 +33,31 @@ const Login = () => {
     setIsSubmitting(false);
 
     if (result.success) {
-      if(user?.role ==="participant" || user?.role ==="supporter") 
-        {
-         navigate('/my-analytics');
+      const storedUserRaw = localStorage.getItem('user');
+      const storedUser = storedUserRaw ? JSON.parse(storedUserRaw) : null;
+
+      if (storedUser?.role === 'admin') {
+        navigate('/admin');
+      } else {
+        navigate('/my-analytics');
       }
-     else{
-        navigate('/dashboard');
-      } 
-    }
-    else{
+    } else {
       setError(result.error || 'Invalid email or password.');
     }
-  }
-  ;
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-muted flex items-center justify-center p-4 relative overflow-hidden">
+      <div className="absolute left-4 top-4 flex gap-2 z-20">
+        <Button variant="outline" size="sm" onClick={() => navigate(-1)}>
+          <ArrowLeft className="mr-2 h-4 w-4" />
+          Back
+        </Button>
+        <Button variant="secondary" size="sm" onClick={() => navigate('/')}>
+          <Home className="mr-2 h-4 w-4" />
+          Home
+        </Button>
+      </div>
       {/* Animated floating blobs for 3D depth */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-1/4 -left-1/4 w-[700px] h-[700px] rounded-full bg-gradient-hero opacity-10 blur-3xl animate-float"></div>

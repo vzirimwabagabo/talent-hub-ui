@@ -1,11 +1,11 @@
 
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/Card";
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
-import { Loader2, AlertTriangle } from "lucide-react";
-import { useLanguage } from "@/contexts/LanguageContext"; // Import the useLanguage hook
+import { Loader2, AlertTriangle, ArrowLeft, Home } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface Language {
   code: string;
@@ -17,8 +17,8 @@ const LanguagePage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
-  const { language, setLanguage } = useLanguage(); // Use the language context
-  const [selectedLanguage, setSelectedLanguage] = useState<string>(language);
+  const navigate = useNavigate();
+  const { languages: selectedLanguages, setLanguages: setSelectedLanguages } = useLanguage();
 
   useEffect(() => {
     const fetchLanguages = async () => {
@@ -28,7 +28,7 @@ const LanguagePage = () => {
           throw new Error('Failed to fetch languages.');
         }
         const data = await response.json();
-        setLanguages(data.data);
+        setLanguages(data.data || []);
       } catch (err) {
         setError((err as Error).message);
       } finally {
@@ -39,19 +39,29 @@ const LanguagePage = () => {
     fetchLanguages();
   }, []);
 
+  const toggleLanguage = (languageCode: string) => {
+    const exists = selectedLanguages.includes(languageCode);
+    const next = exists
+      ? selectedLanguages.filter((code) => code !== languageCode)
+      : [...selectedLanguages, languageCode];
+
+    setSelectedLanguages(next.length > 0 ? next : ['en']);
+  };
+
   const handleSave = () => {
-    if (!selectedLanguage) {
+    if (!selectedLanguages.length) {
       toast({
         title: "No Language Selected",
-        description: "Please select a language before saving.",
+        description: "Please select at least one language before saving.",
         variant: "destructive",
       });
       return;
     }
-    setLanguage(selectedLanguage); // Update the global language state
+
+    setSelectedLanguages(selectedLanguages);
     toast({
-      title: "Language Saved!",
-      description: `Your preferred language has been set to ${languages.find(l => l.code === selectedLanguage)?.name}.`,
+      title: "Languages Saved!",
+      description: `Your preferred languages are: ${selectedLanguages.map((code) => languages.find((lang) => lang.code === code)?.name || code).join(', ')}.`,
     });
   };
 
@@ -77,26 +87,41 @@ const LanguagePage = () => {
 
   return (
     <div className="min-h-screen bg-background p-8">
+      <div className="mb-4 flex gap-3">
+        <Button variant="outline" onClick={() => navigate(-1)}>
+          <ArrowLeft className="mr-2 h-4 w-4" />
+          Back
+        </Button>
+        <Button variant="secondary" onClick={() => navigate('/')}>
+          <Home className="mr-2 h-4 w-4" />
+          Home
+        </Button>
+      </div>
+
       <Card>
         <CardHeader>
           <CardTitle className="text-3xl font-bold">Language Settings</CardTitle>
-          <CardDescription>Select your preferred language.</CardDescription>
+          <CardDescription>Select the languages you can read and work with.</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="max-w-md">
-            <Select onValueChange={setSelectedLanguage} defaultValue={selectedLanguage}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select a language" />
-              </SelectTrigger>
-              <SelectContent>
-                {languages.map((lang) => (
-                  <SelectItem key={lang.code} value={lang.code}>
+          <div className="max-w-2xl space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              {languages.map((lang) => {
+                const isSelected = selectedLanguages.includes(lang.code);
+                return (
+                  <Button
+                    key={lang.code}
+                    type="button"
+                    variant={isSelected ? 'default' : 'outline'}
+                    className="justify-start px-4 py-3 h-auto"
+                    onClick={() => toggleLanguage(lang.code)}
+                  >
                     {lang.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <Button className="mt-4" onClick={handleSave}>Save Changes</Button>
+                  </Button>
+                );
+              })}
+            </div>
+            <Button className="mt-4" onClick={handleSave}>Save Languages</Button>
           </div>
         </CardContent>
       </Card>

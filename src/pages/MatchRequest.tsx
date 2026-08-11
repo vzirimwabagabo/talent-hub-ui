@@ -5,7 +5,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import { 
   getMatchRequestsForTalent, 
   createMatchRequest,
-  getMatchRequestsForReview 
+  getMatchRequestsForReview,
+  updateMatchRequestStatus
 } from '@/api/matchRequestApi';
 import { 
   Card, 
@@ -20,10 +21,8 @@ import {
   XCircle, 
   Clock, 
   FileText,
-  Star,
-  Send
+  Star
 } from 'lucide-react';
-import { cn } from '@/lib/utils';
 import type { MatchRequest } from '@/types/matchRequest';
 
 const getStatusColor = (status: string) => {
@@ -72,7 +71,7 @@ const TalentMatchRequests = () => {
         </Card>
       ) : (
         requests.map(req => (
-          <Card key={req.id}>
+          <Card key={req.id || (req as any)._id}>
             <CardHeader>
               <div className="flex justify-between">
                 <CardTitle>{req.opportunity.title}</CardTitle>
@@ -124,10 +123,10 @@ const ReviewerMatchRequests = () => {
   }, []);
 
   const handleUpdateStatus = async (id: string, status: 'approved' | 'rejected') => {
-    const result = await updateMatchRequestStatus(id, status);
+      const result = await updateMatchRequestStatus(id, status);
     if (result.success) {
       setRequests(prev => 
-        prev.map(req => req.id === id ? { ...req, status } : req)
+          prev.map(req => (req.id || (req as any)._id) === id ? { ...req, status } : req)
       );
     }
   };
@@ -148,7 +147,7 @@ const ReviewerMatchRequests = () => {
         requests
           .filter(req => req.status === 'pending')
           .map(req => (
-            <Card key={req.id}>
+            <Card key={req.id || (req as any)._id}>
               <CardHeader>
                 <CardTitle>{req.opportunity.title}</CardTitle>
                 <div className="text-sm text-muted-foreground">
@@ -167,14 +166,14 @@ const ReviewerMatchRequests = () => {
                     <Button 
                       variant="default" 
                       size="sm"
-                      onClick={() => handleUpdateStatus(req.id, 'approved')}
+                      onClick={() => handleUpdateStatus(req.id || (req as any)._id, 'approved')}
                     >
                       <CheckCircle className="h-4 w-4 mr-1" /> Approve
                     </Button>
                     <Button 
                       variant="destructive" 
                       size="sm"
-                      onClick={() => handleUpdateStatus(req.id, 'rejected')}
+                      onClick={() => handleUpdateStatus(req.id || (req as any)._id, 'rejected')}
                     >
                       <XCircle className="h-4 w-4 mr-1" /> Reject
                     </Button>

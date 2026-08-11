@@ -8,6 +8,7 @@ import api from '@/api/apiConfig';
 
 export interface AdminUser {
   _id: string;
+  id: string;
   name: string;
   email: string;
   role: string;
@@ -65,6 +66,7 @@ export const getAdminUsers = async (): Promise<ApiResponse<AdminUser[]>> => {
     const response = await api.get<{ users: AdminUser[] }>('/admin/users');
     const users = (response.data.users ?? []).map((u: any) => ({
       _id: u._id,
+      id: u._id,
       name: u.name ?? '',
       email: u.email ?? '',
       role: u.role ?? 'participant',

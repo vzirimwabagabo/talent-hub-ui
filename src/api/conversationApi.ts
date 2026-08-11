@@ -15,8 +15,8 @@ interface ApiResponse<T> {
  */
 export const getConversations = async (): Promise<ApiResponse<Conversation[]>> => {
   try {
-    const response = await api.get<{ conversations: Conversation[] }>('/conversation');
-    return { success: true, data: response.data.conversations }; // ✅ fixed
+    const response = await api.get<{ conversations?: Conversation[]; data?: Conversation[] }>('/conversation');
+    return { success: true, data: response.data.conversations ?? response.data.data ?? [] };
   } catch (error: any) {
     const message = error.response?.data?.message || 'Failed to load conversations';
     return { success: false, error: message };
@@ -30,10 +30,8 @@ export const startConversation = async (
   data: StartConversationData
 ): Promise<ApiResponse<Conversation>> => {
   try {
-    //console.log("Sending data for conversations: ", data)
-    const response = await api.post<{ conversation: Conversation }>('/conversation', data);
-    //console.log("from api",response?.data);
-    return { success: true, data: response.data.conversation }; // ✅ fixed
+    const response = await api.post<{ conversation?: Conversation; data?: Conversation }>('/conversation', data);
+    return { success: true, data: response.data.conversation ?? response.data.data };
   } catch (error: any) {
     const message = error.response?.data?.message || 'Failed to start conversation';
     return { success: false, error: message };
@@ -47,10 +45,10 @@ export const getConversationMessages = async (
   conversationId: string
 ): Promise<ApiResponse<Message[]>> => {
   try {
-    const response = await api.get<{ messages: Message[] }>(
+    const response = await api.get<{ messages?: Message[]; data?: Message[] }>(
       `/conversation/${conversationId}/messages`
     );
-    return { success: true, data: response.data.messages }; // ✅ fixed
+    return { success: true, data: response.data.messages ?? response.data.data ?? [] };
   } catch (error: any) {
     const message = error.response?.data?.message || 'Failed to load messages';
     return { success: false, error: message };

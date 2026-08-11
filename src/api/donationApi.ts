@@ -1,6 +1,14 @@
 // src/api/donationApi.ts
 import api from '@/api/apiConfig';
-import { Donation } from '@/types/donation';
+
+export interface Donation {
+  _id?: string;
+  id?: string;
+  amount: number;
+  description?: string;
+  createdAt: string;
+  updatedAt?: string;
+}
 
 // ✅ Fetch current user's donations → use '/donations/me'
 export const getDonations = async (): Promise<Donation[]> => {

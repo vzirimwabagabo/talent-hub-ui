@@ -1,37 +1,78 @@
 
 import React, { createContext, useState, useContext, ReactNode, useEffect } from 'react';
 
-// Define the shape of the context
 interface LanguageContextType {
   language: string;
+  languages: string[];
   setLanguage: (language: string) => void;
+  setLanguages: (languages: string[]) => void;
+  addLanguage: (language: string) => void;
+  removeLanguage: (language: string) => void;
 }
 
-// Create the context with a default value
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
-// Create a provider component
 export const LanguageProvider = ({ children }: { children: ReactNode }) => {
-  const [language, setLanguageState] = useState(() => {
-    return localStorage.getItem('app_language') || 'en'; // Default to English
-  });
+  const getStoredLanguages = () => {
+    try {
+      const stored = localStorage.getItem('app_languages');
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch {
+      // ignore invalid data and fall back to single language value
+    }
 
-  useEffect(() => {
-    localStorage.setItem('app_language', language);
-  }, [language]);
-
-  const setLanguage = (newLanguage: string) => {
-    setLanguageState(newLanguage);
+    const single = localStorage.getItem('app_language');
+    return single ? [single] : ['en'];
   };
 
+  const [languages, setLanguagesState] = useState<string[]>(() => getStoredLanguages());
+
+  useEffect(() => {
+    const normalized = [...new Set(languages.filter(Boolean))];
+    if (normalized.length === 0) {
+      setLanguagesState(['en']);
+      return;
+    }
+
+    localStorage.setItem('app_languages', JSON.stringify(normalized));
+    localStorage.setItem('app_language', normalized[0]);
+  }, [languages]);
+
+  const setLanguage = (newLanguage: string) => {
+    const normalized = newLanguage ? [newLanguage] : ['en'];
+    setLanguagesState(normalized);
+  };
+
+  const setLanguages = (nextLanguages: string[]) => {
+    const normalized = [...new Set((nextLanguages || []).filter(Boolean))];
+    setLanguagesState(normalized.length > 0 ? normalized : ['en']);
+  };
+
+  const addLanguage = (languageCode: string) => {
+    if (!languageCode) return;
+    setLanguagesState((current) => [...new Set([...current, languageCode])]);
+  };
+
+  const removeLanguage = (languageCode: string) => {
+    if (!languageCode) return;
+    setLanguagesState((current) => {
+      const next = current.filter((item) => item !== languageCode);
+      return next.length > 0 ? next : ['en'];
+    });
+  };
+
+  const language = languages[0] || 'en';
+
   return (
-    <LanguageContext.Provider value={{ language, setLanguage }}>
+    <LanguageContext.Provider value={{ language, languages, setLanguage, setLanguages, addLanguage, removeLanguage }}>
       {children}
     </LanguageContext.Provider>
   );
 };
 
-// Create a custom hook for easy access to the context
 export const useLanguage = () => {
   const context = useContext(LanguageContext);
   if (context === undefined) {

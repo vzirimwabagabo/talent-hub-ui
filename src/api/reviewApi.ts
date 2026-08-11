@@ -2,10 +2,15 @@
 import api from '@/api/apiConfig';
 import { Review, ReviewFormData } from '@/types/review';
 
+export const getAllReviews = async (): Promise<Review[]> => {
+  const res = await api.get<{ reviews: Review[] }>('/reviews');
+  return res.data.reviews || [];
+};
+
 // Get reviews for a talent profile
 export const getReviewsByTalent = async (talentId: string): Promise<Review[]> => {
   const res = await api.get<{ reviews: Review[] }>(`/reviews/talent/${talentId}`);
-  return res.data.reviews;
+  return res.data.reviews || [];
 };
 
 // Submit a new review
@@ -16,8 +21,9 @@ export const createReview = async (talentId: string, data: ReviewFormData): Prom
   });
   return res.data.review;
 };
+
 // Update a review
-export const updateReview = async (reviewId: string,  ReviewFormData): Promise<Review> => {
+export const updateReview = async (reviewId: string, data: ReviewFormData): Promise<Review> => {
   const res = await api.put<{ review: Review }>(`/reviews/${reviewId}`, data);
   return res.data.review;
 };

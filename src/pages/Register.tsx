@@ -275,7 +275,7 @@ const Register = () => {
                   <RoleOption
                     role="participant"
                     icon={Users}
-                    label="Participant"
+                    label="Talent"
                     active={formData.role === 'participant'}
                     onClick={() =>
                       setFormData({

@@ -1,29 +1,35 @@
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/Card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ExternalLink } from "lucide-react";
-
-const volunteerProfiles = [
-  {
-    name: "Alice Smith",
-    avatar: "/placeholder.svg",
-    skills: ["Event Planning", "Fundraising", "Community Outreach"],
-    interests: ["Education", "Environment", "Social Justice"],
-    availability: "Part-time",
-    bio: "A dedicated volunteer with a passion for making a positive impact in the community."
-  },
-  {
-    name: "David Chen",
-    avatar: "/placeholder.svg",
-    skills: ["Graphic Design", "Social Media Marketing"],
-    interests: ["Arts & Culture", "Animal Welfare"],
-    availability: "Occasional",
-    bio: "A creative individual looking to contribute design skills to meaningful causes."
-  }
-];
+import { getPublicVolunteerProfiles, type PublicVolunteerProfile } from "@/api/volunteerApi";
 
 const Volunteer = () => {
+  const [profiles, setProfiles] = useState<PublicVolunteerProfile[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const loadProfiles = async () => {
+      try {
+        const res = await getPublicVolunteerProfiles();
+        if (res.success) {
+          setProfiles(res.data || []);
+        } else {
+          setError(res.error || 'Failed to load volunteer profiles');
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadProfiles();
+  }, []);
+
   return (
     <div className="min-h-screen bg-background p-8">
       <Card className="mb-8">
@@ -33,9 +39,24 @@ const Volunteer = () => {
         </CardHeader>
       </Card>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {volunteerProfiles.map((profile, index) => (
-          <Card key={index}>
+      {loading ? (
+        <Card>
+          <CardContent className="p-6 text-muted-foreground">Loading volunteer profiles...</CardContent>
+        </Card>
+      ) : error ? (
+        <Card>
+          <CardContent className="p-6 text-destructive">{error}</CardContent>
+        </Card>
+      ) : profiles.length === 0 ? (
+        <Card>
+          <CardContent className="p-6 text-muted-foreground">
+            No public volunteer profiles yet. Be the first to join and showcase your skills.
+          </CardContent>
+        </Card>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {profiles.map((profile) => (
+          <Card key={profile.id}>
             <CardContent className="p-6">
               <div className="flex items-center mb-4">
                 <Avatar className="h-16 w-16 mr-4">
@@ -69,7 +90,14 @@ const Volunteer = () => {
               </Button>
             </CardContent>
           </Card>
-        ))}
+          ))}
+        </div>
+      )}
+
+      <div className="mt-8 text-center">
+        <Button type="button" onClick={() => navigate('/register')}>
+          Join as Volunteer
+        </Button>
       </div>
     </div>
   );

@@ -32,6 +32,16 @@ export const getAllOpportunities = async () => {
   }
 }
 
+export const getExternalJobs = async () => {
+  try {
+    const res = await api.get('/jobs/external');
+    return { success: true, jobs: res.data?.jobs || [] };
+  } catch (error) {
+    console.log(error);
+    return { success: false, jobs: [] };
+  }
+};
+
 export const getOpportunityDetails = async (id:string) => {
   try {
     const res = await api.get(`/opportunity/${id}`)

@@ -1,29 +1,46 @@
+import { useEffect, useState } from "react";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/Card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ExternalLink } from "lucide-react";
+import { ExternalLink, Loader2 } from "lucide-react";
+import api from "@/api/apiConfig";
 
-const talentProfiles = [
-  {
-    name: "Jane Doe",
-    avatar: "/placeholder.svg",
-    skills: ["UI/UX Design", "React", "Node.js"],
-    experienceLevel: "Intermediate",
-    availability: "Part-time",
-    bio: "A passionate designer with a knack for creating beautiful and intuitive user experiences."
-  },
-  {
-    name: "John Smith",
-    avatar: "/placeholder.svg",
-    skills: ["Data Science", "Python", "Machine Learning"],
-    experienceLevel: "Expert",
-    availability: "Full-time",
-    bio: "A data scientist with a strong background in statistical analysis and predictive modeling."
-  }
-];
+interface TalentProfile {
+  _id?: string;
+  id?: string;
+  bio?: { en?: string; fr?: string; sw?: string; rw?: string } | string;
+  skills?: string[];
+  experienceLevel?: string;
+  availability?: string;
+  user?: {
+    _id?: string;
+    name?: string;
+    email?: string;
+    avatar?: string;
+  };
+}
 
 const Talent = () => {
+  const [talentProfiles, setTalentProfiles] = useState<TalentProfile[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    const fetchProfiles = async () => {
+      try {
+        const response = await api.get<{ data: TalentProfile[] }>('/talent');
+        setTalentProfiles(response.data.data || []);
+      } catch (err: any) {
+        setError(err?.response?.data?.message || "Failed to load talent profiles.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProfiles();
+  }, []);
+
   return (
     <div className="min-h-screen bg-background p-8">
       <Card className="mb-8">
@@ -33,33 +50,57 @@ const Talent = () => {
         </CardHeader>
       </Card>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {talentProfiles.map((profile, index) => (
-          <Card key={index}>
-            <CardContent className="p-6">
-              <div className="flex items-center mb-4">
-                <Avatar className="h-16 w-16 mr-4">
-                  <AvatarImage src={profile.avatar} />
-                  <AvatarFallback>{profile.name.charAt(0)}</AvatarFallback>
-                </Avatar>
-                <div>
-                  <p className="font-bold text-lg">{profile.name}</p>
-                  <p className="text-sm text-muted-foreground">{profile.experienceLevel}</p>
-                </div>
-              </div>
-              <p className="text-muted-foreground mb-4">{profile.bio}</p>
-              <div className="flex flex-wrap gap-2 mb-4">
-                {profile.skills.map((skill, i) => (
-                  <Badge key={i} variant="secondary">{skill}</Badge>
-                ))}
-              </div>
-              <Button className="w-full">
-                View Profile <ExternalLink className="h-4 w-4 ml-2" />
-              </Button>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+      {loading ? (
+        <Card>
+          <CardContent className="p-6 flex items-center gap-2 text-muted-foreground">
+            <Loader2 className="h-4 w-4 animate-spin" />
+            Loading talent profiles...
+          </CardContent>
+        </Card>
+      ) : error ? (
+        <Card>
+          <CardContent className="p-6 text-destructive">{error}</CardContent>
+        </Card>
+      ) : talentProfiles.length === 0 ? (
+        <Card>
+          <CardContent className="p-6 text-muted-foreground">No talent profiles available yet.</CardContent>
+        </Card>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {talentProfiles.map((profile) => {
+            const name = profile.user?.name || "Talent Profile";
+            const avatar = profile.user?.avatar || "/placeholder.svg";
+            const bio = typeof profile.bio === "string" ? profile.bio : profile.bio?.en || "No bio available yet.";
+            const skills = profile.skills?.length ? profile.skills : ["Career support", "Professional development"];
+
+            return (
+              <Card key={profile._id || profile.id}>
+                <CardContent className="p-6">
+                  <div className="flex items-center mb-4">
+                    <Avatar className="h-16 w-16 mr-4">
+                      <AvatarImage src={avatar} />
+                      <AvatarFallback>{name.charAt(0)}</AvatarFallback>
+                    </Avatar>
+                    <div>
+                      <p className="font-bold text-lg">{name}</p>
+                      <p className="text-sm text-muted-foreground">{profile.experienceLevel || "Professional"}</p>
+                    </div>
+                  </div>
+                  <p className="text-muted-foreground mb-4">{bio}</p>
+                  <div className="flex flex-wrap gap-2 mb-4">
+                    {skills.map((skill, i) => (
+                      <Badge key={`${skill}-${i}`} variant="secondary">{skill}</Badge>
+                    ))}
+                  </div>
+                  <Button className="w-full" onClick={() => window.location.href = '/register'}>
+                    View Profile <ExternalLink className="h-4 w-4 ml-2" />
+                  </Button>
+                </CardContent>
+              </Card>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 };

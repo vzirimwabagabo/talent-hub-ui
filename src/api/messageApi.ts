@@ -19,8 +19,8 @@ export const sendMessage = async (
   data: SendMessageData
 ): Promise<ApiResponse<Message>> => {
   try {
-    const response = await api.post<{ message: Message }>('/message', data);
-    return { success: true, data: response.data.message };
+    const response = await api.post<{ message?: Message; data?: Message }>('/message', data);
+    return { success: true, data: response.data.message ?? response.data.data };
   } catch (error: any) {
     const message = error.response?.data?.message || 'Failed to send message';
     return { success: false, error: message };

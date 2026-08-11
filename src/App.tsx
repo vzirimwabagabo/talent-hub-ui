@@ -7,6 +7,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import RootRedirect from "./components/RootRedirect"; // 👈 NEW
 import Register from "./pages/Register";
 import Login from "./pages/Login";
+import AdminLogin from "./pages/AdminLogin";
 import Opportunities from "./pages/Opportunities";
 import Dashboard from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
@@ -60,8 +61,17 @@ const App = () => (
                 path="/login"
                 element={
                   <PublicRoute 
-                  redirectPath="dashboard">
+                  redirectPath="/dashboard">
                     <Login />
+                  </PublicRoute>
+                }
+              />
+
+              <Route
+                path="/admin/login"
+                element={
+                  <PublicRoute redirectPath="/admin">
+                    <AdminLogin />
                   </PublicRoute>
                 }
               />
@@ -251,17 +261,6 @@ const App = () => (
     <ProtectedRoute requiredRole="admin">
       <DashboardLayout>
         <AdminDashboard />
-      </DashboardLayout>
-    </ProtectedRoute>
-  }
-/>
-
-<Route
-  path="/volunteer"
-  element={
-    <ProtectedRoute>
-      <DashboardLayout>
-        <Volunteer />
       </DashboardLayout>
     </ProtectedRoute>
   }

@@ -26,8 +26,6 @@ const roleConfig: Record<UserRole, { label: string; icon: any; color: string }> 
   supporter: { label: 'Supporter', icon: HeartHandshake, color: 'bg-emerald-500/10 text-emerald-500' },
 };
 
-const supporterTypeOptions: SupporterType[] = [null, 'employer', 'donor', 'volunteer'];
-
 const UserManagement = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
@@ -103,7 +101,7 @@ const UserManagement = () => {
   const handleDelete = async (userId: string) => {
     const result = await deleteUser(userId);
     if (result.success) {
-      setUsers(prev => prev.filter(u => u._id !== userId));
+      setUsers(prev => prev.filter(u => u.id !== userId));
       setActionMessage({ type: 'success', message: 'User deleted successfully' });
     } else {
       setActionMessage({ type: 'error', message: result.error || 'Delete failed' });
@@ -351,7 +349,7 @@ const UserManagement = () => {
                               size="icon"
                               variant="ghost"
                               className="text-destructive hover:bg-destructive/10"
-                              onClick={() => setDeleteConfirm(user._id)}
+                              onClick={() => setDeleteConfirm(user.id)}
                             >
                               <Trash2 className="h-4 w-4" />
                             </Button>

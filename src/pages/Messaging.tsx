@@ -28,6 +28,7 @@ import { Input } from '@/components/ui/Input';
 
 const Messaging = () => {
   const { user } = useAuth();
+  const currentUserId = user ? (user.id || user._id) : null;
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [activeConversation, setActiveConversation] = useState<Conversation | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -69,14 +70,13 @@ const Messaging = () => {
     
     const fetchUsers = async () => {
       //console.log(user, isLoadingUsers);
-      if (!user?.id || isLoadingUsers) return;
+      if (!currentUserId || isLoadingUsers) return;
       
       setIsLoadingUsers(true);
       try {
         const result = await getAllUsers();
-        //console.log("Users: ", result);
         if (mounted && result.success) {
-          const others = result.data?.filter(u => u._id !== user.id) || [];
+          const others = result.data?.filter(u => (u._id || u.id) !== currentUserId) || [];
           setUsers(others);
         }
       } catch (error) {
@@ -93,7 +93,7 @@ const Messaging = () => {
     return () => {
       mounted = false;
     };
-  }, [user?.id]); // Only depend on user ID
+  }, [currentUserId]);
 
   // Load messages for active conversation
   useEffect(() => {
@@ -130,13 +130,12 @@ const Messaging = () => {
   // changing the messaging 
 
   const handleSendMessage = async () => {
-    if (!newMessage.trim() || !activeConversation?.id || !user || isSending) return;
-    // no comments
+    if (!newMessage.trim() || !activeConversation?.id || !currentUserId || isSending) return;
     setIsSending(true);
     try {
       const result = await sendMessage({
         conversationId: activeConversation.id,
-        senderId:user.id,
+        senderId: currentUserId,
         content: newMessage,
       });
       
@@ -144,7 +143,6 @@ const Messaging = () => {
         setNewMessage('');
         setMessages(prev => [...prev, result.data!]);
 
-        // Optimized conversation update
         setConversations(prev =>
           prev.map(conv =>
             conv.id === activeConversation.id
@@ -152,7 +150,7 @@ const Messaging = () => {
                   ...conv,
                   lastMessage: {
                     content: result.data!.content,
-                    senderId: user._id,
+                    senderId: currentUserId,
                     sentAt: new Date().toISOString(),
                   },
                 }
@@ -169,15 +167,12 @@ const Messaging = () => {
 
   const handleStartConversation = async (participantId: string) => {
 
-    if (!user || isStarting) return;
+    if (!currentUserId || isStarting) return;
 
-    
-    
     setIsStarting(true);
     try {
-      // Check for existing conversation
       const existing = conversations.find(conv =>
-        conv.participants.some(p => p.id === participantId)
+        conv.participants.some(p => (p.id || p._id) === participantId)
       );
       
       if (existing) {
@@ -199,7 +194,7 @@ const Messaging = () => {
   };
 
   const otherUser = activeConversation
-    ? activeConversation.participants.find(p => p.id !== user?._id)
+    ? activeConversation.participants.find(p => (p.id || p._id) !== currentUserId)
     : null;
 
   if (isLoading) {
@@ -271,7 +266,7 @@ const Messaging = () => {
                 <ScrollArea className="flex-1">
                   <div className="p-2 space-y-1">
                     {conversations.map(conv => {
-                      const other = conv.participants.find(p => p.id !== user?.id);
+                      const other = conv.participants.find(p => (p.id || p._id) !== currentUserId);
                       return (
                         <button
                           key={conv.id}
@@ -343,7 +338,8 @@ const Messaging = () => {
                   <ScrollArea className="flex-1 p-4">
                     <div className="space-y-4">
                       {messages.map((msg) => {
-                        const isOwn = msg.sender.id === user?.id;
+                        const senderId = msg.sender?.id || msg.sender?._id || '';
+                        const isOwn = senderId === currentUserId;
                         return (
                           <div
                             key={msg.id}

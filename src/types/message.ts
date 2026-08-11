@@ -21,7 +21,9 @@ export interface ConversationMessage extends Message {
 }
 
 export interface SendMessageData {
-  receiverId: string;
+  conversationId?: string;
+  senderId?: string;
+  receiverId?: string;
   content: string;
 }
 
