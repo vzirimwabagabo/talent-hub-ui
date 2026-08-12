@@ -32,10 +32,15 @@ import DashboardLayout from "./components/DashboardLayout";
 import AdminDashboard from "./pages/AdminDashboard";
 import MatchRequests from "@/pages/MatchRequest";
 import CreateOpportunity from "./pages/admin/CreateOpportunity";
+import ManageJobs from "./pages/admin/ManageJobs";
+import ReviewApplications from "./pages/admin/ReviewApplications";
 import OpportunityDetail from "./pages/opportunityDetails";
 import EditOpportunity from "./pages/EditOpportunity";
 import CreateEvent from "./pages/CreateEvent";
 import MyAnalytics from '@/pages/MyAnalytics'
+import Settings from "./pages/Settings";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -105,6 +110,24 @@ const App = () => (
                 }
               />
 
+              <Route
+                path="/forgot-password"
+                element={
+                  <PublicRoute redirectPath="/dashboard">
+                    <ForgotPassword />
+                  </PublicRoute>
+                }
+              />
+
+              <Route
+                path="/reset-password/:token"
+                element={
+                  <PublicRoute redirectPath="/dashboard">
+                    <ResetPassword />
+                  </PublicRoute>
+                }
+              />
+
               {/* Protected routes */}
               <Route
                 path="/dashboard"
@@ -141,6 +164,17 @@ const App = () => (
                   <ProtectedRoute>
                     <DashboardLayout>
                       <MyAnalytics />
+                    </DashboardLayout>
+                  </ProtectedRoute>
+                }
+              />
+
+              <Route
+                path="/settings"
+                element={
+                  <ProtectedRoute>
+                    <DashboardLayout>
+                      <Settings />
                     </DashboardLayout>
                   </ProtectedRoute>
                 }
@@ -186,6 +220,16 @@ const App = () => (
                   </ProtectedRoute>
                 }
               />
+                <Route
+                  path="/admin/jobs"
+                  element={
+                    <ProtectedRoute requiredRole="admin" unauthorizedPath="/dashboard">
+                      <DashboardLayout>
+                        <ManageJobs />
+                      </DashboardLayout>
+                    </ProtectedRoute>
+                  }
+                />
               <Route
                 path="/bookmarks"
                 element={
@@ -200,6 +244,16 @@ const App = () => (
                   <ProtectedRoute requiredRole="admin">
                     <DashboardLayout>
                       <Reviews />
+                    </DashboardLayout>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/review-applications"
+                element={
+                  <ProtectedRoute requiredRole="admin" unauthorizedPath="/dashboard">
+                    <DashboardLayout>
+                      <ReviewApplications />
                     </DashboardLayout>
                   </ProtectedRoute>
                 }

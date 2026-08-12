@@ -12,12 +12,14 @@ const RootRedirect = () => {
 
   useEffect(() => {
     if (!loading && isAuthenticated) {
-      if(user?.role == 'participant' || user?.role == "supporter") {
-        navigate("/my-analytics", {replace:true});
-      }else{ navigate('/dashboard', { replace: true });}
+      if (user?.role === 'participant' || user?.role === 'supporter') {
+        navigate('/my-analytics', { replace: true });
+      } else {
+        navigate('/dashboard', { replace: true });
+      }
 
     }
-  }, [isAuthenticated, loading, navigate]);
+  }, [isAuthenticated, loading, navigate, user?.role]);
 
   // While checking auth, or if not authenticated, show public landing
   if (loading) {

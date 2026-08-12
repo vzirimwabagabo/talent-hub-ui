@@ -131,8 +131,14 @@ export const sidebarItems: SidebarItem[] = [
   //   roles: ['admin'],
   // },
   {
-    title: 'All Opportunities',
-    href: '/admin/create-opportunity',
+    title: 'Manage Jobs',
+    href: '/admin/jobs',
+    icon: Briefcase,
+    roles: ['admin'],
+  },
+  {
+    title: 'Review Applications',
+    href: '/admin/review-applications',
     icon: Briefcase,
     roles: ['admin'],
   },

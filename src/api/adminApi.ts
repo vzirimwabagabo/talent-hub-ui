@@ -64,15 +64,15 @@ export const getAllUsers = async (): Promise<AdminUser[]> => {
 export const getAdminUsers = async (): Promise<ApiResponse<AdminUser[]>> => {
   try {
     const response = await api.get<{ users: AdminUser[] }>('/admin/users');
-    const users = (response.data.users ?? []).map((u: any) => ({
+    const users = (response.data.users ?? []).map((u) => ({
       _id: u._id,
       id: u._id,
-      name: u.name ?? '',
-      email: u.email ?? '',
-      role: u.role ?? 'participant',
+      name: u.name,
+      email: u.email,
+      role: u.role,
       supporterType: u.supporterType ?? null,
-      createdAt: u.createdAt ?? '',
-      updatedAt: u.updatedAt ?? '',
+      createdAt: u.createdAt,
+      updatedAt: u.updatedAt,
     }));
 
     return { success: true, data: users };
